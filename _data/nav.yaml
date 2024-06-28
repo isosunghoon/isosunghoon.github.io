@@ -1,0 +1,6 @@
+- title: Math #Menu item title.
+  url: category/math.html #Menu item url.
+  hue: "var(--c-themeHueRed)" #Menu item hue - see note [1].
+- title: Deep Learning
+  url: category/deeplearning.html
+  hue: "var(--c-themeHueRed)"
