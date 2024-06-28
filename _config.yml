@@ -28,6 +28,7 @@ github_username:
 
 # Build settings
 theme: jekyll-theme-simplex
+remote_theme: andreondra/jekyll-theme-simplex
 plugins:
   - jekyll-feed
 
