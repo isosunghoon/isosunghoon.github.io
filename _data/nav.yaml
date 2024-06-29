@@ -10,7 +10,7 @@
   #           - title: Libraries
   #             url: libs.html
   #             hue: "var(--c-themeHueBlue)"
-- title: Deep Learning
-  url: category/deeplearning.html
+- title: Informatics
+  url: category/informatics.html
   # icon: assets/img/icons/design.svg
   hue: "var(--c-themeHueBlue)"
