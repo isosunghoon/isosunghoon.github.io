@@ -1,0 +1,54 @@
+---
+layout: post #Do not change.
+category: [informatics, deeplearning]
+title: "Ian Goodfellow Deep Learning Ch 2. Linear Algebra" #Article title.
+#author: andy #Author's nick.
+#nextPart: _posts/2021-01-30-example.md #Next part.
+#prevPart: _posts/2021-01-30-example.md #Previous part.
+#og_image: assets/example.png #Open Graph preview    image.
+#og_description: "Example description." #Open Graph description.
+#fb_app_id: example
+---
+## 1. Basic Linear Algebra
+너무 기초적인 선형대수 내용은 정리하지 않았다. 처음 보는 내용, 표기법 위주로 정리했다.
+### 1.1. Notations
+- 벡터 원소의 부분집합   
+벡터 $\mathbf x \in \mathbb R^6$, 집합 $S=\\{1,3,6\\}$가 있으면 $\mathbf x_S = \\{x_1,x_3,x_6\\}$, $\mathbf x_{-S} = \\{x_2,x_4,x_5\\}$를 의미한다.
+- Broadcasting   
+행렬 $A$, 벡터 $\mathbf b$에 대해 $C=A+\mathbf{b}$는 $C_{ij} = A_{ij} + b_j$를 의미한다.
+- Element-wise Product (Hadamard Product)   
+크기가 같은 두 행렬 $A, B$에 대해 $C = A \odot B$는 $C_{ij} = A_{ij}\cdot B_{ij}$를 의미한다.
+- diag   
+벡터 $\mathbf v$에 대해 $\text{diag}(\mathbf v)$는 $\mathbf v$의 각 원소를 대각 성분으로 갖는 행렬을 의미한다.   
+벡터의 각 원소를 scaling하고 싶을 때 (가중치 부여) 활용한다. ($\text{diag}(\mathbf v) \mathbf x = \mathbf v \odot \mathbf x$)
+
+### 1.2. Norm
+norm은 벡터의 크기를 나타내는 함수이다. 아래 세 성질을 만족하는 함수를 norm이라고 한다.
+- $f(\mathbf x)=0 \rightarrow \mathbf x = 0$
+- $f(\mathbf x + \mathbf y) \le f(\mathbf x) + f(\mathbf y)$ (triangle inequality)
+- $f(\alpha \mathbf x) = \vert \alpha \vert f(\mathbf x)$
+
+$L^p$ norm은 아래와 같은 수식으로 정의된다.   
+&\vert\vert \mathbf x\vert\vert _p = \left\(\sum_i\vert x_i\vert^p\right\)^{\frac 1p}&
+$L^2$ norm(Euclidean norm)은 원점과 벡터가 나타나는 점 사이 유클리드 거리를 의미한다. $L^2$ norm은 딥러닝 오차 함수로 많이 사용되며, 미분을 쉽게 수행하기 위해 $L^2$ norm의 제곱을 흔히 사용한다. 하지만 $L^2$ norm의 제곱은 원점 근처에서 매우 느리게 증가한다는 문제가 있다.
+
+원점 근처에서 값이 형성되는 상황의 경우는 $L^1$ norm을 주로 사용한다. $L^1$ norm은 원점 근처에서도 동일한 정도로 변화한다. 
+
+0이 아닌 원소의 수를 $L^0$ norm으로 지칭하기도 한다. 그러나 0이 아닌 원소의 수는 norm의 조건을 만족하지 않는다. (셋째 조건 만족 X)
+
+$L^\infty$ norm(max norm)은 벡터의 원소 중 가장 큰 값을 의미한다. $L^0$ norm, $L^1$ norm, $L^2$ norm, $L^\infty$ norm은 딥러닝에서 가장 많이 쓰이는 $L^p$ norm이다.
+
+행렬의 크기를 나타내고 싶을 떄에는 Frobenius Norm을 사용한다. Frobenius norm은 벡터의 $L^2$ norm에 대응된다. Frobenius norm은 $\vert\vert A \vert\vert_F =\sqrt{\sum A_{ij}^2}=\text{tr}(A^T A)$로 계산된다. 
+
+## 2. Single Value Decomposition
+Single Value Decomposition(특이값 분해)은 임의의 $m\times n$ 행렬을 $A=UDV^T$ ($U,V$는 $m\times m$, $n\times n$ orthogonal matrix, $D$는 $m\times n$ diagonal matrix)로 분해하는 것이다. 임의의 행렬은 유일한 single value decomposition을 가진다. (고윳값을 크기 순서 정렬할 때)
+
+$AA^T$, $A^T A$는 모두 symmetric matrix이다. 따라 spectral theorem에 의해 $AA^T$, $A^T A$는 모두 직교 대각화 가능하다. $AA^T = U\Lambda_1 U^T$, $A^TA = V\Lambda_2 V^T$라고 할 경우, 해당 $U,V$는 single value decomposition을 수행했을 때의 $U, V$가 되고, $\Lambda_1 = DD^T$, $\Lambda_2 = D^TD$가 된다. 따라 임의의 행렬 $A$는 유일하게 single value decomposition 가능하다. 
+
+## 3. The Moore-Penrose Pseudoinverse
+Moore-Penrose Pseudoinverse는 임의의 $m\times n$ 행렬 $A$에 대해 역행렬의 역할을 하는 행렬로 $A^+$로 표기한다. 이때 임의의 벡터 $\mathbf x, \mathbf y$에 대해 $\mathbf x=A^+ \mathbf y$는 $A\mathbf x=\mathbf y$의 least squares solution이 된다.
+
+Moore-Penrose Pseudoinverse는 $A^+=\lim\limits_{\alpha\to 0} (A^T A+\alpha I)^{-1}A^T$ 로 정의한다. 계산 시에는 $A^+ = V D^+ U^T$ ($D^+$는 $D$의 0 아닌 값에 모두 역수 취한 것의 transpose)로, $A$의 single value decomposition을 활용하여 더욱 편리하게 계산한다.
+
+## 4. Principal Components Analysis
+나중에 작성
