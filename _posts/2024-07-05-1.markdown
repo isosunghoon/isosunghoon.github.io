@@ -38,7 +38,7 @@ $L^2$ norm(Euclidean norm)은 원점과 벡터가 나타나는 점 사이 유클
 
 $L^\infty$ norm(max norm)은 벡터의 원소 중 가장 큰 값을 의미한다. $L^0$ norm, $L^1$ norm, $L^2$ norm, $L^\infty$ norm은 딥러닝에서 가장 많이 쓰이는 $L^p$ norm이다.
 
-행렬의 크기를 나타내고 싶을 떄에는 Frobenius Norm을 사용한다. Frobenius norm은 벡터의 $L^2$ norm에 대응된다. Frobenius norm은 $\vert\vert A \vert\vert_F =\sqrt{\sum A_{ij}^2}=\text{tr}(A^T A)$로 계산된다. 
+행렬의 크기를 나타내고 싶을 떄에는 Frobenius Norm을 사용한다. Frobenius norm은 벡터의 $L^2$ norm에 대응된다. Frobenius norm은 $\vert\vert A \vert\vert_F^2 =\sqrt{\sum A_{ij}^2}=\text{tr}(A^T A)$로 계산된다. 
 
 ## 2. Single Value Decomposition
 Single Value Decomposition(특이값 분해)은 임의의 $m\times n$ 행렬을 $A=UDV^T$ ($U,V$는 $m\times m$, $n\times n$ orthogonal matrix, $D$는 $m\times n$ diagonal matrix)로 분해하는 것이다. 임의의 행렬은 유일한 single value decomposition을 가진다. (고윳값을 크기 순서 정렬할 때)
@@ -51,4 +51,8 @@ Moore-Penrose Pseudoinverse는 임의의 $m\times n$ 행렬 $A$에 대해 역행
 Moore-Penrose Pseudoinverse는 $A^+=\lim\limits_{\alpha\to 0} (A^T A+\alpha I)^{-1}A^T$ 로 정의한다. 계산 시에는 $A^+ = V D^+ U^T$ ($D^+$는 $D$의 0 아닌 값에 모두 역수 취한 것의 transpose)로, $A$의 single value decomposition을 활용하여 더욱 편리하게 계산한다.
 
 ## 4. Principal Components Analysis
-나중에 작성
+정보를 최대한 보존하는 방향으로 $\mathbb R ^n$의 점 $m$개의 모임 $\\{\mathbf x^1,\cdots,\mathbf x^m\\}$을 손실 압축한다. 이때 각각의 점을 $\mathbb R^l$ 위로 압축하고, encoding function을 $f$, decoding function을 $g$라고 한다. 이때, PCA에서는 decoding funcion을 column끼리 orthonormal한 $n\times l$ matrix로 놓는다. 이때 정보 손실이 최소가 되도록 encoding function과 decoding function의 값을 결정한다.
+
+$g(\mathbf c) = D\mathbf c$라 하자. 이후 정보 손실이 최소가 되도록 $f(\mathbf x)$를 결정한다. $f(\mathbf x)$는 $\vert\vert \mathbf x - D\mathbf c \vert\vert^2$를 최소화하는 $c$가 된다. 이때 $\vert\vert \mathbf x-D\mathbf c\vert\vert^2 = \mathbf x^T\mathbf x - \mathbf x^T D\mathbf c + \mathbf c^T D^T D \mathbf c = \mathbf x^T\mathbf x - \mathbf x^T D\mathbf c + \mathbf c^T \mathbf c$ 이다. $\nabla_\mathbf c(\mathbf x^T\mathbf x - \mathbf x^T D\mathbf c + \mathbf c^T \mathbf c)=0$ 이 될 때 $2D^T\mathbf x - 2\mathbf c = 0$이다. 따라 $\mathbf c = D^T \mathbf x$로 $f(\mathbf x)$를 결정할 수 있다.
+
+이제, 정보 손실이 최소가 되도록 Decoding matrix $D$를 결정한다.$D$는 귀납적으로, 정보 손실이 가장 적도록 서로 수직한 column을 귀납적으로 결정한다. 이 중 정보 손실이 가장 적도록 첫번째 principal component, 즉 $D$의 첫번째 column을 결정하는 방법은 다음과 같다. $\mathbf d$는 $\vert\vert \mathbf d\vert \vert = 1$일때, $\sum \vert\vert \mathbf x^i - \mathbf d \mathbf d^T \mathbf x^i\vert\vert$를 최소화한다. 행렬의 각 row가 $\mathbf x^i$가 되도록 데이터가 모인 행렬 $X$를 생각할 경우, 이는 $\vert\vert X-X\mathbf d\mathbf d^T\vert\vert_F^2=\text{tr}((X-X\mathbf d\mathbf d^T)^T(X-X\mathbf d\mathbf d^T))$를 최소화하는 것이다. $\text{tr}((X-X\mathbf d\mathbf d^T)^T(X-X\mathbf d\mathbf d^T)) =\text{tr}(X^TX-X^TX\mathbf d\mathbf d^T-\mathbf d\mathbf d^TX^TX+\mathbf d\mathbf d^TX^TX\mathbf d\mathbf d^T) = \text{tr}(X^TX)-2\text{tr}(\mathbf d\mathbf d^TX^TX) + \text{tr}(\mathbf d\mathbf d^T\mathbf d\mathbf d^TX^TX)$이다. 첫 항은 $\mathbf d$와 무관하므로 무시하고, 구속조건을 이용해 간략화 할 시 이는 $-\text{tr}(\mathbf d\mathbf d^T X^TX)$를 최소화하는 것과 동치이다. $X^T X$의 고윳값 분해를 $P^T\Lambda P$라고 하자. $\text{tr}(\mathbf d^TX^TX\mathbf d) = \text{tr}(\mathbf d^TP^T\Lambda P\mathbf d)$를 최대화하는 단위 벡터 $\mathbf d$는 $X^TX$의 가장 큰 고윳값에 대응되는 고유벡터로 결정된다. 이후의 column들은 같은 방법으로 귀납적으로 결정하여, 결론적으로 $X^T X$의 가장 큰 $l$개의 고윳값에 대응되는 고유벡터로 $D$가 구성된다.
