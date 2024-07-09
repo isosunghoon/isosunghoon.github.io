@@ -10,6 +10,58 @@ title: "Ian Goodfellow Deep Learning Ch 3. Probability and Information Theory" #
 #fb_app_id: example
 ---
 ## 1. Probability Theory
-## 2. Common Probability Distributions
+기초적인 확률론 내용은 정리하지 않았다. 처음 보는 내용, 표기법 위주로 정리했다.
+### 1.1. Notations
+- marginal probability   
+Joint probability distribution $P(\mathrm x = x, \mathrm y = y)$가 주어져 있을때, $P(\mathrm x = x)$를 marginal probability라고 한다. Marginal probability는 joint probability를 더하거나(이산적인 경우) 적분하여(연속적인 경우) 구한다.
+- Conditional Independence   
+확률 변수 $\mathrm {x,y,z}$가 주어져 있을 때, $\mathrm z$에 대한 정보를 가졌을 경우 $\mathrm {x,y}$가 독립이면
+$\mathrm{x,y}$가 conditionally independent하다고 하고, $\mathrm x \bot \mathrm y \vert \mathrm z$로 표기한다. $p(\mathrm{x,y}\vert\mathrm{z}) = p(\mathrm{x}\vert\mathrm{z})p(\mathrm{y}\vert\mathrm{z})$ 이면 $\mathrm{x,y}$는 conditionally independent하다.
+- Covariance Matrix   
+random vector $\mathbf x\in \mathbb R^n$에 대해, $\mathbf x$의 covariance matrix는 $\text{Cov}(\mathbf x)_{i,j} = \text{Cov}(\mathrm x_i, \mathrm x_j)$ 인 $n\times n$ matrix이다.
+
+### 1.2. Useful Properties of Common Functions
+$\sigma(x) = \frac 1{1+e^{-x}}$를 logistic sigmoid function라고 한다. Sigmoid function은 치역이 $(0,1)$인 증가함수라는 특징 때문에 널리 활용된다. Sigmoid function은 $x$의 절댓값이 매우 크면 saturate 한다. (입력의 작은 변화에 대한 출력값의 변화가 거의 없다) Sigmoid funcion의 역함수 $\sigma^{-1}(x)=\log(\frac x {1-x})$를 logit이라고 한다.$\zeta(x)=\log(1+e^x)$를 softmax function라고 한다. Softmax function은 $\max(0,x)$와 유사한 개형을 띈다. 이에 따라 $\max(0,x)$와 유사한 기능을 하는 부드러운 (모든 점에서 미분 가능한) 함수를 사용하고 싶을 때 주로 쓰인다. Sigmoid function과 Softmax function은 아래와 같은 특징들 또한 가진다.
+- $\frac d {dx} \sigma(x) = \sigma(x)(1-\sigma(x))$
+- $\sigma(x) + \sigma(-x) = 1$
+- $\zeta(x) = \int_{-\infty}^{x} \sigma(t)dt$
+- $\zeta(x) - \zeta(-x) = x$
+
+### 1.3. Technical Details of Continuous Variables
+연속 확률 변수를 사용할 경우, $p(\mathrm x\in S_1) + p(\mathrm x\in S_2) \gt 1$이지만, $S_1 \cap S_2 = \emptyset$인 집합 $S_1, S_2$가 구성되는 등의 모순이 발생할 수 있다. 이러한 문제를 극복하고 연속 확률 변수를 더욱 정확히 다루기 위해서는 measure theory를 도입하여야 한다. Measure theory를 사용하여, 몇몇 예외적인 범위를 제외하고 확률 변수의 정의역 대부분에서 성립하는 정리를 일반적으로 적용할 수 있다. 확률 변수의 정의역에서 차지하는 부피가 0인 부분집합을 measure zero라고 한다. measure zero의 합집합은 여전히 measure zero이다. Measure zero인 영역을 제외하고 성립하는 정리는 예외를 무시하고 사용해도 안전하다.
+
+두 확률 변수 $\mathrm x, \mathrm y$에 대해, $\mathrm y = f(\mathrm x)$인 관계가 있다고 하자. 이떄 $\vert p_y(f(x))dy\vert = \vert p_x(x)dx\vert$가 되어야 한다. 따라 $p_y(f(x)) = p_x(x) \vert \frac 1 {f'(x)}\vert$ 가 된다. 확률 변수가 벡터 형태일 경우, jacobian matrix를 활용하여 $p_x(\mathbf x) = p_y(f(\mathbf x))\left\\vert \det \frac {\partial f(\mathbf x)}{\partial \mathbf x}\right\\vert$와 같이 쓰여진다.
+
+## 2. Common Probability Distribution
+### 2.1. Bernoulli Distribution
+Bernoulli distribution은 0, 1의 값을 갖는 확률변수에 대한 확률분포이다. Parameter $\phi\in [0,1]$로 통제된다. $P(\mathrm x=1) = \phi$,$P(\mathrm x=0) = 1-\phi$이다. $\mathbb E[\mathrm x] = \phi$, $V(\mathrm x) = \phi(1-\phi)$이다.
+
+### 2.2. Multinoulli Distribution
+Multinoulli distribution은 $k$개의 상태를 갖는 확률변수에 대한 확률분포로, 베르누이 확률분포의 확장이다. $\mathbf p\in[0,1]^{k-1}$을 parameter로 가진다. $p_i$가 $i$째 상태를 가질 확률이며, 마지막 $k$째 상태를 가질 확률은 $1-\Sigma p_i$이다.
+
+### 2.3. Gaussian Distribution
+Gaussian distribution은 정규 분포를 의미한다. 아래와 같은 수식으로 확률 밀도 함수가 정의된다.
+&N(x;\mu, \sigma^2) = \sqrt{\frac 1 {2\pi\sigma^2}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}&
+이때 $\mathbb E[\mathrm x] = \mu$, $V(\mathrm x) = \sigma^2$이다. $\frac 1 {\sigma^2} = \beta$로 정의한 $\beta$를 precision이라고 하며, $\sigma$ 대신 $\beta$를 parameter로 사용하여 표현하기도 한다.
+
+정규분포는 두가지 장점이 있어 많이 사용된다. 첫째로는 중심 극한 정리가 있다. 중심 극한 정리는 동일한 확률 분포를 가진 확률 변수의 합은, 합한 변수의 수가 충분히 많으면 정규분포에 가까워진다는 것이다.이에 따라 임의의 확률분포를 효과적으로 정규분포로 근사할 수 있다. 둘째로는 정규분포가 동일한 분산을 가지는 확률분포 중 가장 높은 양의 불확실성을 가진다는 것이다. 이에 따라 어떠한 확률 분포를 정규 분포로 간주하는 것은 해당 확률 분포에 대한 구속 조건(모델에게 제공하는 사전 정보)을 최소한으로 걸게 된다.
+
+정규 분포는 $\mathbb R^n$에서 multivariate normal distribution로 확장된다. multivariate normal distribution는 positive definite symmetric matrix인 covariance matrix $\Sigma$와 평균을 나타내는 벡터 $\mathbf{\mu}$를 parameter로 가진다. 그 수식은 아래와 같다.
+&N(\mathbf x;\mathbf{\mu}, \Sigma) = \sqrt{\frac 1{(2\pi)^n \det \Sigma}} e^{-\frac 12(\mathbf x - \mathbf{\mu})^T \Sigma^{-1}(\mathbf x - \mathbf {\mu})}&
+$\Sigma$가 대각행렬일 경우 diagonal normal distribution이라 하고, $\Sigma$가 단위행렬의 스칼라 배일 경우 isotropic normal distribution이라 한다.
+
+### 2.4. Exponential and Laplace Distributions
+$x=0$에서 뾰족한 모양의 확률 분포를 만들고 싶을 때 exponential distribution $p(x;\lambda) = \lambda e^{-\lambda x} (x\ge 0)$을 사용한다. 임의의 $\mu$에서 뾰족한 모양의 대칭적인 확률분포를 만들고 싶을 때에는 laplace distribution $\text{Laplace}(x;\mu,\gamma) = \frac 1 {2\gamma} e^{-\frac{\vert x-\mu\vert}{\gamma}}$를 쓴다.
+
+### 2.5. The Dirac Distribution and Empirical Distribution
+Dirac distribution은 한 점에 모든 확률이 모여 있는 연속 확률 변수를 묘사하는 확률 분포이다. $p(x) = \delta(x-\mu)$로 정의된다. 디렉 델타 함수는 일반적인 함수의 조건을 만족하지 않으므로 generalized function의 일종이 된다. (함수의 극한으로 정의) 연속 확률 분포가 주어진 $m$개의 점에서만 존재하도록 하는 확률 분포를 empirical distribution이라 한다. empirical distribution은 $p(x) = \frac 1 m \sum \delta(x - x^i)$ 꼴의 확률 밀도 함수를 갖는다. Empirical distribution은 training dataset에서 sampling 하는 과정을 확률분포에서 sampling하는 과정으로 묘사할 때에 쓰인다.또한 train data의 likelihood를 최대화한다는 특징이 있다.
+
+### 2.6. Mixtures of Distributions
+다양한 형태의 확률 분포를 결합한 확률 분포를 구성하고 싶을 때가 많다. 가장 흔한 방법은 mixture distribution을 만드는 것이다. $P(c)$가 multinoulli distribution라 할 때, $p(x) = \sum P(c=i)p(x\vert c=i)$를 통해 mixture distribution을 만든다. 이때 $P(c)$는 $p(x)$와 연관되어 있지만, 직접적으로 관측될 수 없다. 이러한 확률변수를 latent variable이라 한다.
+
+Empirical distribution은 mixture distribution의 예시이다. 각 $p(x\vert c=i)$가 정규 분포인 경우, 이를 gaussian mixture model라 한다. Gaussian mixture model은 임의의 부드러운 확률 분포를 근사할 수 있는 universal approximator이다. Gaussian mixture model의 parameter는 각 정규분포의 평균과 공분산 행렬 $\mu_i, \Sigma_i$와 prior probability $\alpha_i = P(c=i)$로 구성된다. Prior probability는 모델의 $x$에 대한 관측 이전 $c$에 대한 추정을 나타낸다. 모델의 $x$에 대한 관측 이후 $c$에 대한 추정인 $P(c\vert x)$는 posterior probability라 한다.
+
 ## 3. Information Theory
+발생할 가능성이 높은 사건이 발생했다는 사실보다, 발생할 가능성이 적은 사건이 발생했다는 사실이 더 높은 정보를 제공한다. 이에 따라 어떤 사건 $\mathrm x = x$의 self information를 $I(x) = - \log P(x)$로 정의한다. 어떤 확률 분포가 가지는 불확실성을 나타내는 값인 shannon entropy를 $H(x)= \mathbb E_{P} [I(x)] = - \mathbb E_{P} [\log P(x)]$로 정의한다.
+
 ## 4. Structured Probabilistic Models
