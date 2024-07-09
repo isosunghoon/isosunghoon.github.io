@@ -62,6 +62,11 @@ Dirac distribution은 한 점에 모든 확률이 모여 있는 연속 확률 �
 Empirical distribution은 mixture distribution의 예시이다. 각 $p(x\vert c=i)$가 정규 분포인 경우, 이를 gaussian mixture model라 한다. Gaussian mixture model은 임의의 부드러운 확률 분포를 근사할 수 있는 universal approximator이다. Gaussian mixture model의 parameter는 각 정규분포의 평균과 공분산 행렬 $\mu_i, \Sigma_i$와 prior probability $\alpha_i = P(c=i)$로 구성된다. Prior probability는 모델의 $x$에 대한 관측 이전 $c$에 대한 추정을 나타낸다. 모델의 $x$에 대한 관측 이후 $c$에 대한 추정인 $P(c\vert x)$는 posterior probability라 한다.
 
 ## 3. Information Theory
-발생할 가능성이 높은 사건이 발생했다는 사실보다, 발생할 가능성이 적은 사건이 발생했다는 사실이 더 높은 정보를 제공한다. 이에 따라 어떤 사건 $\mathrm x = x$의 self information를 $I(x) = - \log P(x)$로 정의한다. 어떤 확률 분포가 가지는 불확실성을 나타내는 값인 shannon entropy를 $H(x)= \mathbb E_{P} [I(x)] = - \mathbb E_{P} [\log P(x)]$로 정의한다. 
+발생할 가능성이 높은 사건이 발생했다는 사실보다, 발생할 가능성이 적은 사건이 발생했다는 사실이 더 높은 정보를 제공한다. 이에 따라 어떤 사건 $\mathrm x = x$의 self information를 $I(x) = - \log P(x)$로 정의한다. 어떤 확률 분포가 가지는 불확실성을 나타내는 값인 shannon entropy는 $H(x)= \mathbb E_{P} [I(x)] = - \mathbb E_{P} [\log P(x)]$로 정의한다. Kullback-Leibler Divergence (KL Divergence)는 두 확률분포 $P(x), Q(x)$ 사이 차이를 나타내는 값이다. KL Divergence는 $D_{KL}(P\vert\vert Q) = \mathbb E_{P}\left\[\log \frac {P(x)}{Q(x)}\right\]$로 정의한다. KL divergence의 값은 항상 0 이상이며, $P$와 $Q$가 같은 확률 분포일 때에만 0이다. 그렇지만 $D_{KL}(P\vert\vert Q)\neq D_{KL} (Q\vert\vert P)$ 이므로 distance measure은 아니다. Cross-entropy $H(P,Q) = H(P) + D_{KL}(P\vert\vert Q) = - \mathbb E_{P} \log Q(x)$ 로 정의한다. 정보 이론에서는 $0\log 0$을 $\lim\limits_{x\to 0} x\log x = 0$ 으로 계산한다.
 
 ## 4. Structured Probabilistic Models
+많은 양의 확률 변수가 사용되지만, 서로 연관된 확률 변수의 개수는 적은 확률 분포를 흔히 찾아볼 수 있다. 이러한 확률 분포를 표현하기 위하여 전체 joint probability distribution을 묘사하는 것은 매우 비효율적이다. 이럴 때 structured probabilistic model을 사용하여 확률 분포를 묘사한다.
+Structured probabilistic model은 확률 변수를 노드로 하고, 연관된 확률 변수를 간선으로 연결한 그래프 형태의 모델이다.
+
+Structured probabilistic model은 directed와 undirected로 나뉜다. Directed model은 그래프의 간선 방향이 존재한다. 그 경우, conditional 
+probability를 활용하여 전체 확률 분포를 표현한다. Undirected model은 그래프의 간선 방향이 존재하지 않는다. 이 경우 서로 연결된 확률 변수들의 집합을 clique라 한다. 각 clique를 묘사하는 함수를 모두 곱한 후 이를 정규화하여 전체 확률 분포를 표현한다.
