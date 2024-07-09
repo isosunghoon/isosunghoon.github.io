@@ -62,6 +62,6 @@ Dirac distribution은 한 점에 모든 확률이 모여 있는 연속 확률 �
 Empirical distribution은 mixture distribution의 예시이다. 각 $p(x\vert c=i)$가 정규 분포인 경우, 이를 gaussian mixture model라 한다. Gaussian mixture model은 임의의 부드러운 확률 분포를 근사할 수 있는 universal approximator이다. Gaussian mixture model의 parameter는 각 정규분포의 평균과 공분산 행렬 $\mu_i, \Sigma_i$와 prior probability $\alpha_i = P(c=i)$로 구성된다. Prior probability는 모델의 $x$에 대한 관측 이전 $c$에 대한 추정을 나타낸다. 모델의 $x$에 대한 관측 이후 $c$에 대한 추정인 $P(c\vert x)$는 posterior probability라 한다.
 
 ## 3. Information Theory
-발생할 가능성이 높은 사건이 발생했다는 사실보다, 발생할 가능성이 적은 사건이 발생했다는 사실이 더 높은 정보를 제공한다. 이에 따라 어떤 사건 $\mathrm x = x$의 self information를 $I(x) = - \log P(x)$로 정의한다. 어떤 확률 분포가 가지는 불확실성을 나타내는 값인 shannon entropy를 $H(x)= \mathbb E_{P} [I(x)] = - \mathbb E_{P} [\log P(x)]$로 정의한다.
+발생할 가능성이 높은 사건이 발생했다는 사실보다, 발생할 가능성이 적은 사건이 발생했다는 사실이 더 높은 정보를 제공한다. 이에 따라 어떤 사건 $\mathrm x = x$의 self information를 $I(x) = - \log P(x)$로 정의한다. 어떤 확률 분포가 가지는 불확실성을 나타내는 값인 shannon entropy를 $H(x)= \mathbb E_{P} [I(x)] = - \mathbb E_{P} [\log P(x)]$로 정의한다. 
 
 ## 4. Structured Probabilistic Models
