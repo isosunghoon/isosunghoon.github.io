@@ -1,0 +1,41 @@
+---
+layout: post #Do not change.
+category: [informatics, deeplearning]
+title: "Ian Goodfellow Deep Learning Ch 4. Numerical Computation" #Article title.
+#author: andy #Author's nick.
+#nextPart: _posts/2021-01-30-example.md #Next part.
+#prevPart: _posts/2021-01-30-example.md #Previous part.
+#og_image: assets/example.png #Open Graph preview    image.
+#og_description: "Example description." #Open Graph description.
+#fb_app_id: example
+---
+## 1. Overflow and Underflow
+컴퓨터는 이산적인 값의 수열로 연속적인 값인 실수를 표현한다. 이에 따라 approximation error가 발생한다. 이러한 대표적인 오차는 0에 가까운 작은 값을 0으로 처리해 생기는 underflow와, 아주 큰 값을 무한으로 처리해 생기는 overflow가 있다. 많은 연산 과정에서 0과 무한은 일반적인 수와는 다르게 처리되기 때문에 (division by zero 등) 이러한 문제가 발생한다.
+
+overflow와 underflow가 발생하는 예시로는 softmax function $f(\mathbf x)_i = \frac{e^{x_i}}{\sum_j e^{x_j}}$이 있다. 모든 $x_j$가 아주 작은 값이라고 생각하자. 그러면 분모의 모든 항에서 underflow가 일어나 분모가 0으로 계산된다. 0으로 나눌 수 없으므로, 함수값이 undefined가 된다. 반대로 $x_i$가 아주 큰 값이라고 생각하자. 그러면 overflow가 일어나 마찬가지로 함수값이 undefined가 된다. 이를 해결하기 위해서 $\mathbf z = \mathbf x - \max x_i$를 활용해 softmax 함수를 계산할 수 있다. 이때 $f(\mathbf z)_i = f(\mathbf x)_i$이고, $z_i=0$인 $i$가 있어 분모 값이 0이 아니게 되어 underflow 문제를 해결한다. 또한 $z_i\le 0$이므로 overflow 또한 발생하지 않는다.
+
+## 2. Poor Conditioning
+어떤 함수가 입력값의 미세한 변화에 따라 함수값이 어느 정도로 변화하는지 여부를 conditioning라고 한다. 입력의 미세한 변화에 따라 함수값이 많이 바뀔 경우, 입력의 rounding error 등이 함수를 통과하며 크게 증폭되어 계산 시 문제가 될 수 있다. 행렬 $A$의 condition number을 $\max_{i,j} \vert \frac{\lambda_i}{\lambda_j} \vert$로 정의한다. 행렬 $A$의 condition number가 클수록 함수 $f(x) = A^{-1}x$가 poorly conditioned, 즉 입력값의 미세한 오차가 함수값의 큰 오차를 만들게 된다. 이때 발생하는 오차는 $A^{-1}$를 컴퓨터가 계산하는 과정에서 생기는 수치적인 오차가 아닌 행렬 자체의 특성이다.
+
+## 3. Gradient-Based Optimization
+### 3.1. Gradient Descent
+어떤 함수의 최대값, 혹은 최소값을 찾는 과정을 optimization이라고 한다. 이때, optimization의 대상이 되는 함수를 objective function, 또는 criterion라고 한다. 최솟값을 찾는 경우 cost function, loss function, error function라고도 한다. Optimization을 통해 local minimum이 아닌 global minimum을 찾는 것은 매우 어렵다. 따라 일반적으로 딥러닝에서 optimization의 목표는 함수값이 충분히 작은 지점을 찾는 것으로 한다.
+
+충분히 작은 $\epsilon$에 대해 $f(x-\epsilon sign(f'(x)))\le f(x)$이다. 이에 따라 $x$의 값을 $f'(x)$의 부호에 따라 조금씩 바꾸며 optimization을 수행하는 방식을 gradient descent라고 한다. 다변수함수의 경우, 같은 방식으로 $\mathbf x' = \mathbf x - \epsilon \nabla f(\mathbf x)$와 같이 $x$를 바꿔 나간다. 이때 $\epsilon$을 learning rate라고 한다. $\epsilon$는 일반적으로 작은 상수로 설정한다. 또는 다양한 $\epsilon$ 값에 대해 $f(\mathbf x-\epsilon\nabla f(\mathbf x))$를 계산한 후, 이 것이 최소가 되는 $\epsilon$을 선택하는데 이를 line search라고 한다. $\mathbf x$를 바꾸는 과정을 반복하지 않고, 바로 $\nabla f(\mathbf x)=0$이 되는 $\mathbf x$를 구해서 함수의 임계점에 도달할 수도 있다.
+
+### 3.2. Jacobian and Hessian Matrices
+$J_{i,j} = \frac{\partial}{\partial x_j}f(\mathbf x)\_i$ 로 정의한 행렬을 jacobian matrix라고 한다. $H_{i,j} = \frac{\partial^2}{\partial x_i \partial x_j} f(\mathbf x)$로 정의한 행렬을 hessian matrix라고 한다. $f$의 hessian matrix는 $\nabla f$의 jacobian matrix이다. 다변수함수의 $\mathbf d$ 방향 이계도 함수는 $\mathbf d^T H \mathbf d$로 결정된다. ($\mathbf d$는 단위벡터)
+
+이차 테일러 근사를 적용할 경우 충분히 작은 $\epsilon$에 대해 $f(\mathbf x) \approx f (\mathbf x_0) - \epsilon (\mathbf x-\mathbf x_0)^T \nabla f(\mathbf x_0) + \frac 12 \epsilon^2 (\mathbf x - \mathbf x_0)^T H(\mathbf x_0) (\mathbf x - \mathbf x_0)$가 된다. 이때 근사한 함수가 최소가 되는 $\mathbf x=\mathbf x_0 - H(\mathbf x_0)^{-1}f(\mathbf x_0)$이다. 이러한 방식으로 optimization을 수행하는 것을 Newton's method라고 한다. Newton's method는 gradient descent에 비해 임계점으로 더 빠르게 수렴한다. 따라 local minimum 근처에서는 좋은 기법이지만, saddle point 근처에서는 나쁘다. Gradient descent와 같이 일계도함수를 이용한 optimization을 first order optimization, Newton's method와 같이 이계도함수를 이용한 optimization을 second order optimization라고 한다.
+
+Optimization 기법은 일반적인 함수에 대해 적용 가능하지만 최솟값을 확실히 찾는 것에 대한 보장이 적은 기법들과 특정한 조건을 만족하는 함수에 대해서만 적용 가능하지만 최솟값에 대한 보장을 가진 기법들로 나뉜다. 두번째 종류의 예시로는 convex optimization이 있다. 두번째 종류의 optimization에서 함수에 적용하는 조건 중 예시로는 Lipschitz continuity가 있다. Lipschitz continuous한 함수는 어떤 상수(Lipschitz constant) $L$이 존재해 $\forall \mathbf x, \forall \mathbf y, \vert f(\mathbf x) - f(\mathbf y) \vert \le L \vert\vert \mathbf x - \mathbf y \vert\vert_2$를 만족하는 함수이다. Lipschitz continuity는 상대적으로 약한 조건이기에 많은 함수가 조건을 만족한다. 또한 수식에서 볼 수 있듯이 gradient descent 등 최적해를 반복적으로 조금씩 찾아나가는 optimization 기법의 성능을 보장할 수 있다. 
+
+## 4. Constrained Optimization
+전체 영역에서 $f(x)$를 최소화 하는 것이 아닌, 어떤 부분 집합 $S$에 대해 $x\in S$ 일떄 $f(x)$를 최소화 하는 것을 constrained optimization라고 한다. 이때 $S$ 안의 점들을 feasible point라고 한다. Constrained optimization에 대한 한 종류의 접근법은 gradient descent를 수행한 후 그 결과를 $S$에 사영하거나, feasible한 step size에 대해서만 line search를 수행하는 등, 기존 함수에 optimization 기법을 번형해 적용하는 것이 있다.
+
+다른 접근법으로는 constrained optimization의 결과를 얻을 수 있게 해주는 unconstrained optimization 문제를 설계해 해결하는 것이 있다. 대표적인 예시로는 Karush–Kuhn–Tucker (KKT) approach가 있다. KKT approach는 $S = \\{\forall i, g_i(x) = 0, \forall j, h_j(x)\le 0\\}$라고 할 때 generalized lagrangian $L(x, \mathbf \lambda, \mathbf \alpha) = f(x) + \sum \lambda_i g_i(x) + \sum \alpha_i h_i(x)$를 생각한다. 이때 feasible point에서는 $\max_\limits\mathbf\lambda \max_\limits{\mathbf\alpha,\mathbf\alpha\ge 0} L(x,\mathbf \lambda, \mathbf \alpha) = f(x)$ 이고, infeasible point에서는 $\max_\limits\mathbf\lambda \max_\limits{\mathbf\alpha,\mathbf\alpha\ge 0} L(x,\mathbf \lambda, \mathbf \alpha) = \infty$ 이기 떄문에 $\min_\limits x \max_\limits\mathbf\lambda \max_\limits{\mathbf\alpha,\mathbf\alpha\ge 0} L(x,\mathbf \lambda, \mathbf \alpha) = \min_\limits{x\in S}f(x)$이다. 이에 따라 generalized lagrangian에 대한 unconstrained optimization을 통해 constrained optimization을 수행할 수 있다.
+
+## 5. Linear Least Squares
+$f(\mathbf x) = \frac 12 \vert \vert A\mathbf x - \mathbf b\vert\vert_2$를 최소화 하는 $\mathbf x$를 찾는 문제를 해결하자. 선형대수학을 통해 최적해를 구할 수 있지만($\mathbf x = A^+\mathbf b$), gradient descent나 Newton's method를 적용할 수도 있다. 이때 Newton's method를 적용할 경우 $f$가 quadratic function이므로 한번의 step으로 global minimum에 도달한다.
+
+$\mathbf x^T \mathbf x \le 1$라는 제약 조건 하에서 같은 문제를 해결하자. Lagrangian $L(\mathbf x, \lambda) = f(\mathbf x) + \lambda (\mathbf x^T \mathbf x-1)$을 잡고 $\min_\limits{\mathbf x} \max_\limits{\lambda\ge 0} L(\mathbf x, \lambda)$를 구한다. $\nabla_x L = A^TA\mathbf x - A^T\mathbf b + 2\lambda \mathbf x$이므로 조건을 만족하는 $\mathbf x = (A^TA+2\lambda I)^{-1} A^T \mathbf b$이다. $\frac{\partial L}{\partial \lambda} = \mathbf x^T \mathbf x-1$ 이다. 따라 $\mathbf x$의 norm이 1이 되도록 $\lambda$를 결정하여 문제를 해결할 수 있다.

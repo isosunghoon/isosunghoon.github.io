@@ -1,0 +1,22 @@
+---
+layout: post #Do not change.
+category: [informatics, deeplearning]
+title: "Ian Goodfellow Deep Learning Ch 5. Machine Learning Basics" #Article title.
+#author: andy #Author's nick.
+#nextPart: _posts/2021-01-30-example.md #Next part.
+#prevPart: _posts/2021-01-30-example.md #Previous part.
+#og_image: assets/example.png #Open Graph preview    image.
+#og_description: "Example description." #Open Graph description.
+#fb_app_id: example
+---
+## 1. Learning Algorithms
+## 2. Capacity, Overfitting and Underfitting
+## 3. Hyperparameters and Validation Sets
+## 4. Estimators, Bias and Variance
+## 5. Maximum Likelihood Estimation
+## 6. Bayesian Statistics
+## 7. Supervised Learning Algorithms
+## 8. Unsupervised Learning Algorithms
+## 9. Stochastic Gradient Descent
+## 10. Building a Machine Learning Algorithm
+## 11. Challenges Motivating Deep Learning
